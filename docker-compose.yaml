@@ -1,0 +1,37 @@
+services:
+  builder:
+    image: maven:3.9.6-eclipse-temurin-17-alpine
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: mvn clean package -DskipTests
+  postgres-vector:
+    image: ankane/pgvector:latest
+    container_name: postgres-vector
+    ports:
+      - "5432:5432"
+    environment:
+     - POSTGRES_USER=admin
+     - POSTGRES_PASSWORD=admin
+     - POSTGRES_DB=vector_db
+    network_mode: host
+    volumes:
+      - .data/postgresql/data:/var/lib/postgresql/data
+  askflunece:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: askfluence
+    ports:
+      - "8088:8088"
+    environment:
+      - CONFLUENCE_USER_ID=pravin.nimodiya@ideas.com
+      - CONFLUENCE_USER_TOKEN=dummy
+      - CONFLUENCE_URL=https://ideasinc.atlassian.net/wiki/rest/api/content/
+      - AWS_REGION=us-east-2
+      - POSTGRES_URL=jdbc:postgresql://localhost:5432/vector_db
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    depends_on:
+      - postgres-vector
+    network_mode: host
