@@ -1,11 +1,11 @@
 package com.ideas.askfluence.query;
 
-import com.ideas.askfluence.config.Connections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,10 +24,10 @@ public class PostgresRAGContextResolver {
     public static final String METADATA = "metadata";
 
     @Autowired
-    private Connections connections;
+    private DataSource connections;
 
     public String resolve(List<Float> queryVector) {
-        try (Connection conn = connections.getPostgresConnection();
+        try (Connection conn = connections.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(VECTOR_QUERY)) {
             pstmt.setString(1, queryVector.toString());
             ResultSet rs = pstmt.executeQuery();

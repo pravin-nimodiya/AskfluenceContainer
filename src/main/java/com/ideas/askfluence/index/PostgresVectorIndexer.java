@@ -1,11 +1,11 @@
 package com.ideas.askfluence.index;
 
-import com.ideas.askfluence.config.Connections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -18,12 +18,11 @@ import java.util.Map;
 @Slf4j
 public class PostgresVectorIndexer {
     @Autowired
-    private Connections connections;
+    private DataSource dataSource;
 
     public void indexToPostgresWithMetadata(Map<String, List<Float>> embeddings){
-        Connection connection = null;
         try {
-            connection = connections.getPostgresConnection();
+            Connection   connection = dataSource.getConnection();
             String insertQuery = "INSERT INTO confluence_vector (metadata, vectors) VALUES (?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
             connection.setAutoCommit(false);
@@ -38,12 +37,6 @@ public class PostgresVectorIndexer {
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }finally {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
         }
 
     }
