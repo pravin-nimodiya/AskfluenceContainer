@@ -35,3 +35,18 @@ services:
     depends_on:
       - postgres-vector
     network_mode: host
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: askfluence-frontend
+    command: npm start
+    ports:
+      - "3000:3000"
+    depends_on:
+      - askfluence
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    network_mode: host
