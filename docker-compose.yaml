@@ -17,7 +17,7 @@ services:
     network_mode: host
     volumes:
       - .data/postgresql/data:/var/lib/postgresql/data
-  askflunece:
+  askfluence:
     build:
       context: .
       dockerfile: Dockerfile
@@ -39,6 +39,9 @@ services:
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_BACKEND_URL: http://abc:8088
     container_name: askfluence-frontend
     command: npm start
     ports:
