@@ -3,10 +3,7 @@ package com.ideas.askfluence.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.*;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
 
@@ -26,6 +23,9 @@ public class Connections {
     @Value("${aws.region:us-east-2}")
     private String awsRegion;
 
+    @Value("${aws.use.iam.role:false}")
+    private Boolean useIamRole;
+
     @Bean
     public  BedrockRuntimeClient getBedrockClient() {
         return BedrockRuntimeClient.builder()
@@ -38,6 +38,8 @@ public class Connections {
     AwsCredentialsProvider getAwsCredentials() {
         if(useSessionToken) {
             return StaticCredentialsProvider.create(AwsSessionCredentials.create(accessKey, secretKey, sessionToken));
+        }else if(useIamRole){
+            return InstanceProfileCredentialsProvider.create();
         }
         return StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey,secretKey));
     }
