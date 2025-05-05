@@ -20,8 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.ideas.askfluence.config.ConfigData.CONTENT_TYPE;
-import static com.ideas.askfluence.config.Sanitizer.convertJsonArrayToList;
-import static com.ideas.askfluence.config.Sanitizer.sanitize;
+import static com.ideas.askfluence.config.Sanitizer.*;
 
 @RequiredArgsConstructor
 @Service
@@ -41,7 +40,7 @@ public class EmbeddingGenerator {
 
     private List<Float> embedd(String rawData) {
 
-        String requestPayload = "{ \"inputText\": \"" + sanitize(rawData) + "\" }";
+        String requestPayload = "{ \"inputText\": \"" + limitTokenLength(sanitize(rawData)) + "\" }";
 
         InvokeModelRequest request = InvokeModelRequest.builder()
                 .modelId(configData.getEmbeddingModelId())  // Use Cohere for embeddings

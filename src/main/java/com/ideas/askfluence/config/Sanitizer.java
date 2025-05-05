@@ -28,6 +28,10 @@ public class Sanitizer {
         return chunks;
     }
 
+    public static String limitTokenLength(String text) {
+        return text.length() > CHUNK_SIZE ? text.substring(0, CHUNK_SIZE) : text;
+    }
+
     public static List<Float> convertJsonArrayToList(JsonNode embeddingNode) {
         List<Float> embeddingList = new ArrayList<>();
         if (embeddingNode.isArray()) {
