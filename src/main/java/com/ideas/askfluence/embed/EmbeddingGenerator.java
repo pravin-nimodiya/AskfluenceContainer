@@ -40,7 +40,7 @@ public class EmbeddingGenerator {
 
     private List<Float> embedd(String rawData) {
 
-        String requestPayload = "{ \"inputText\": \"" + limitTokenLength(sanitize(rawData)) + "\" }";
+        String requestPayload = "{ \"inputText\": \"" + sanitize(limitTokenLength(rawData)) + "\" }";
 
         InvokeModelRequest request = InvokeModelRequest.builder()
                 .modelId(configData.getEmbeddingModelId())  // Use Cohere for embeddings
