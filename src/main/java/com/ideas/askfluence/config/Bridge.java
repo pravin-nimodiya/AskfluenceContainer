@@ -29,8 +29,8 @@ public class Bridge {
     }
 
     public  HttpGet getLoginRequest(String url) {
-        log.info("URL: " + url);
-        log.info("Authorization: " + config.getConfluenceUserId()+":"+config.getConfluenceToken());
+        log.debug("URL: " + url);
+        log.debug("Authorization: " + config.getConfluenceUserId()+":"+config.getConfluenceToken());
         HttpGet request = new HttpGet(url);
         request.setHeader("Authorization", "Basic " + getAuthString());
         request.setHeader("Accept", ConfigData.CONTENT_TYPE);

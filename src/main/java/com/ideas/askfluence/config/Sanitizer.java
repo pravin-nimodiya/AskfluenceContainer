@@ -17,6 +17,7 @@ public class Sanitizer {
                 .replace("\r", "")
                 .replace("\\","\\\\")
                 .replace("\"","")
+                .replaceAll("[^\\x20-\\x7E]", "")
                 .replaceAll("\\s+", " ");
     }
 

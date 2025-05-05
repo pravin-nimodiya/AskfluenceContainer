@@ -24,10 +24,19 @@ public class FluenceResponseEngine {
 
         String prompt = new Prompt(context, userQuery).getPrompt();
         // Updated payload with explicit inference type
+        return queryLLM(prompt);
+    }
+
+    public String generateLLMSummaryResponse(String context) {
+        String prompt = new Prompt(context,null).getSummaryPrompt();
+        return queryLLM(prompt);
+    }
+
+    private String queryLLM(String prompt) {
         String payload = "{"
                 + "\"prompt\": \"" + prompt + "\","
-                + "\"max_gen_len\": 500,"
-                + "\"temperature\": 0.7,"
+                + "\"max_gen_len\": 400,"
+                + "\"temperature\": 0.2,"
                 + "\"top_p\": 0.9"
                 + "}";
 
