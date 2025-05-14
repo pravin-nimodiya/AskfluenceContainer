@@ -33,7 +33,7 @@ public class PostgresRAGContextResolver {
             ResultSet rs = pstmt.executeQuery();
             List<String> context = new ArrayList<>();
             while (rs.next()) {
-                log.info("Retrieved metadata: " + rs.getString(METADATA));
+                log.debug("Retrieved metadata: " + rs.getString(METADATA));
                 context.add(rs.getString(METADATA));
             }
             return String.join("\n", context);

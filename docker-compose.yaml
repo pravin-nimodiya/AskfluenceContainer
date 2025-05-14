@@ -26,7 +26,7 @@ services:
       - "8088:8088"
     environment:
       - CONFLUENCE_USER_ID=pravin.nimodiya@ideas.com
-      - CONFLUENCE_USER_TOKEN=ATATT3xFfGF0FSDjtR2oVNrWrHooAX9YkzMpAO08VjpLhI0FO6hCkoANryQGYrCvuVGfri6AnJf-knwrfpa4A_eI7252sLSXBlg0NoMUPMoqsM44g_dxq9wHjQJtWYNaNZCu-yTOANnBIcskSIQ72ZuS4nSOIeQRo7_HPXDoA5oETBJ9ZKL_UsU=82F45714
+      - CONFLUENCE_USER_TOKEN=dummy
       - CONFLUENCE_URL=https://ideasinc.atlassian.net/wiki/rest/api/content/
       - AWS_REGION=us-east-2
       - POSTGRES_URL=jdbc:postgresql://localhost:5432/vector_db

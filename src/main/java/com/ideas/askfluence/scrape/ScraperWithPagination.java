@@ -45,7 +45,7 @@ public class ScraperWithPagination {
     private List<String> crawl(String pageId) {
         try {
             String rawData = bridge.executeHttpRequest(String.format(configData.getConfluenceUrl()+"/%s?expand=body.view", pageId));
-            log.info("Raw data: " + rawData);
+            log.debug("Raw data: " + rawData);
             JsonNode result = Sanitizer.OBJECT_MAPPER.readTree(rawData);
             List<String> pageContent = new ArrayList<>();
                     if (hasRelevantData(result)) {
