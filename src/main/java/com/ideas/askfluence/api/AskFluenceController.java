@@ -39,4 +39,11 @@ public class AskFluenceController {
         RESPONSE_MAPPER.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
         return ResponseEntity.ok(RESPONSE_MAPPER.writeValueAsString(response));
     }
+
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+        return ResponseEntity.ok("OK");
+    }
+
+
 }
