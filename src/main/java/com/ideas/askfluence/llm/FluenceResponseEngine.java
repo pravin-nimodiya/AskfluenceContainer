@@ -36,8 +36,8 @@ public class FluenceResponseEngine {
         String payload = "{"
                 + "\"prompt\": \"" + prompt + "\","
                 + "\"max_gen_len\": 400,"
-                + "\"temperature\": 0.2,"
-                + "\"top_p\": 0.9"
+                + "\"temperature\": 0.1,"
+                + "\"top_p\": 0.2"
                 + "}";
 
         InvokeModelRequest request = InvokeModelRequest.builder()

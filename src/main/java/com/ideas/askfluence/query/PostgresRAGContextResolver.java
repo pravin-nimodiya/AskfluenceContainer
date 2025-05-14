@@ -20,7 +20,7 @@ import java.util.List;
 public class PostgresRAGContextResolver {
     public static final String COSINE_METRIC = "<=>";
     public static final String VECTOR_QUERY = " SELECT metadata FROM confluence_vector ORDER BY vectors "
-            + COSINE_METRIC + " ?::vector(1024) LIMIT 3;";
+            + COSINE_METRIC + " ?::vector(1024) LIMIT 2;";
     public static final String METADATA = "metadata";
 
     @Autowired

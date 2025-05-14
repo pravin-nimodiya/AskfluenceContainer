@@ -5,9 +5,11 @@ import com.ideas.askfluence.config.Sanitizer;
 public class Prompt {
     String context;
     String userQuery;
-    final String preText = "Answer the following question in a clear, single-paragraph summary (max 5 lines). "
-            + "Do not repeat or speculate. Use Markdown-style reference links if available. "
-            + "End the answer cleanly and do not continue past the answer.";
+    final String preText = "Answer the following question using only the provided context. \n" +
+            "Respond in a single, concise paragraph (max 5 sentences). \n" +
+            "Avoid speculation, repetition, or unnecessary detail. \n" +
+            "Use Markdown-style reference links if applicable. \n" +
+            "End the response cleanly.\n";
     static final String summarizeText = "Summarize the following content within max 5000 tokens so as to be able to " +
             "generate embeddings, including relevant reference " +
             "links if available. ";
@@ -19,7 +21,12 @@ public class Prompt {
     }
 
     public String getPrompt() {
-        return Sanitizer.sanitize(preText + "\n\nContext:\n" + context + "\n\nUser Question:\n" + userQuery + "\n\nAnswer:");
+       return Sanitizer.sanitize(
+                preText + "\n\n"
+                        + "### Context:\n" + context + "\n\n"
+                        + "### Question:\n" + userQuery + "\n\n"
+                        + "### Answer:"
+        );
     }
 
     public String getSummaryPrompt() {
