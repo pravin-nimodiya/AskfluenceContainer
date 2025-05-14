@@ -9,6 +9,7 @@ CREATE DATABASE vector_db;
 CREATE EXTENSION IF NOT EXISTS vector;
 CREATE TABLE IF NOT EXISTS public.confluence_vector (
                                           id serial4 NOT NULL,
+                                          root_id int8 NOT NULL,
                                           metadata text NULL,
                                           vectors public.vector NULL,
                                           CONSTRAINT confluence_vector_pkey PRIMARY KEY (id)

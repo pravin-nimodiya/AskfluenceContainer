@@ -31,7 +31,7 @@ public class FluenceIndexPostgresAgent {
         List<String> allContent = new ArrayList<>();
         scraperWithPagination.deepScrape(rootId, allContent);
         Map<String, List<Float>> embeddingsWithText = embeddingGenerator.embedAllContent(allContent);
-        postgresVectorIndexer.indexToPostgresWithMetadata(embeddingsWithText);
+        postgresVectorIndexer.indexToPostgresWithMetadata(rootId,embeddingsWithText);
         return "Indexing completed successfully.";
     }
 }
