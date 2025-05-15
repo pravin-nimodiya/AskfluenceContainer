@@ -1,6 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ReactMarkdown from 'react-markdown';
+import Select from 'react-select';
+import './App.css';
+
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -8,8 +11,26 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({});
   const [showFeedback, setShowFeedback] = useState(false);
+  const [selectedSpaces, setSelectedSpaces] = useState([]);
+  const [availableSpaces, setAvailableSpaces] = useState([]);
+
+    const spaceOptions = availableSpaces.map(space => ({
+      value: space.spaceId,
+      label: space.spaceName,
+    }));
 
   const bottomRef = useRef(null);
+
+  useEffect(() => {
+    fetch('/askfluence/spaces')
+      .then((res) => res.json())
+      .then((data) => {
+        setAvailableSpaces(data);
+      })
+      .catch((error) => {
+        console.error('Failed to load spaces:', error);
+      });
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -20,29 +41,33 @@ function App() {
     console.log(`Feedback for message ${index}: ${type}`);
   };
 
-  const sendMessage = async () => {
-    if (input.trim() === '') return;
+ const sendMessage = async () => {
+   if (input.trim() === '') return;
 
-    const userMessage = { sender: 'user', text: input };
-    setMessages([...messages, userMessage]);
-    setInput('');
-    setLoading(true);
-    setShowFeedback(false);
+   const userMessage = { sender: 'user', text: input };
+   setMessages([...messages, userMessage]);
+   setInput('');
+   setLoading(true);
+   setShowFeedback(false);
 
-    try {
-      const response = await fetch(`/askfluence/ask`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question: input }),
-      });
+   try {
+     const response = await fetch(`/askfluence/ask`, {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({
+         question: input,
+         spaces: selectedSpaces  // 👈 Added here
+       }),
+     });
 
-      const data = await response.json();
-      displayBotMessage(data);
-    } catch (error) {
-      console.error('Error:', error);
-      displayBotMessage('Oops! Something went wrong. Try again.');
-    }
-  };
+     const data = await response.json();
+     displayBotMessage(data);
+   } catch (error) {
+     console.error('Error:', error);
+     displayBotMessage('Oops! Something went wrong. Try again.');
+   }
+ };
+
 
  const displayBotMessage = (text) => {
    let index = 0;
@@ -69,12 +94,12 @@ function App() {
 
   return (
       <div className="container mt-4">
-        <header className="bg-light text-dark text-center py-3 d-flex flex-column align-items-center">
+        <header className="bg-light text-dark text-center py-1 d-flex flex-column align-items-center">
           <div className="d-flex align-items-center">
-            <img src="/askfluence1_Gv4_icon.ico" alt="Logo" height="50" className="rounded-circle me-3" />
+            <img src="/askfluence1_Gv4_icon.ico" alt="Logo" height="40" className="rounded-circle me-3" />
             <h1 className="mb-0">AskFluence</h1>
           </div>
-            <h8 className="fw-light mt-1"style={{marginLeft: 4 + 'em'}}>Why search when you can just ask!</h8>
+            <h8 className="fw-light mt-0"style={{marginLeft: 2 + 'em'}}>Why search when you can just ask!</h8>
 
         </header>
         <div className="card mt-3" style={{ maxWidth: '900px', margin: '0 auto', height: '430px' }}>
@@ -112,6 +137,7 @@ function App() {
             </div>
           </div>
         </div>
+
         <div className="input-group mt-3" style={{ maxWidth: '900px', margin: '0 auto' }}>
           <input
             type="text"
@@ -123,7 +149,22 @@ function App() {
           />
           <button onClick={sendMessage} className="btn btn-primary">Ask</button>
         </div>
-        <footer className="bg-light text-center py-3 mt-4">
+        <div className="mt-3" style={{ maxWidth: '900px', margin: '0 auto' }}>
+            <div className="filter-group">
+                    <Select
+                      classNamePrefix="custom-select"
+                      options={spaceOptions}
+                      isMulti
+                      placeholder="Filter by Confluence Space (optional):"
+                      value={spaceOptions.filter(option => selectedSpaces.includes(option.value))}
+                      onChange={(selected) => {
+                        const values = selected ? selected.map(s => s.value) : [];
+                        setSelectedSpaces(values);
+                      }}
+                    />
+                  </div>
+                </div>
+        <footer className="bg-light text-center py-1 mt-1">
           <p>&copy; 2025 AskFluence (pravin.nimodiya@ideas.com)</p>
         </footer>
       </div>

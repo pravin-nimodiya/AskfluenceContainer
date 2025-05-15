@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ideas.askfluence.config.Bridge;
 import com.ideas.askfluence.config.ConfigData;
 import com.ideas.askfluence.config.Sanitizer;
+import com.ideas.askfluence.index.SpaceDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.internal.StringUtil;
@@ -92,5 +93,14 @@ public class ScraperWithPagination {
         }
 
         return allDescendantIds;
+    }
+
+
+
+    public SpaceDetails getSpaceDetails(String rootId) throws Exception {
+        String url = String.format(configData.getConfluenceUrl()+"/%s?expand=space", rootId);
+        String response = bridge.executeHttpRequest(url);
+        JsonNode root = new ObjectMapper().readTree(response);
+        return new SpaceDetails(root);
     }
 }

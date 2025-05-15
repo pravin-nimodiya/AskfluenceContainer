@@ -2,6 +2,7 @@ package com.ideas.askfluence.agent;
 
 import com.ideas.askfluence.embed.EmbeddingGenerator;
 import com.ideas.askfluence.index.PostgresVectorIndexer;
+import com.ideas.askfluence.index.SpaceDetails;
 import com.ideas.askfluence.scrape.ScraperWithPagination;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,12 @@ public class FluenceIndexPostgresAgent {
         List<String> allContent = new ArrayList<>();
         scraperWithPagination.deepScrape(rootId, allContent);
         Map<String, List<Float>> embeddingsWithText = embeddingGenerator.embedAllContent(allContent);
-        postgresVectorIndexer.indexToPostgresWithMetadata(rootId,embeddingsWithText);
+        SpaceDetails spaceDetails = scraperWithPagination.getSpaceDetails(rootId);
+        postgresVectorIndexer.indexToPostgresWithMetadata(spaceDetails,embeddingsWithText);
         return "Indexing completed successfully.";
+    }
+
+    public List<SpaceDetails> getSpaces() {
+        return postgresVectorIndexer.getAllSpaces();
     }
 }

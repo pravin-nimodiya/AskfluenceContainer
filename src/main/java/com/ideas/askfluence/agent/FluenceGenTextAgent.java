@@ -1,5 +1,6 @@
 package com.ideas.askfluence.agent;
 
+import com.ideas.askfluence.api.AskRequest;
 import com.ideas.askfluence.embed.EmbeddingGenerator;
 import com.ideas.askfluence.llm.FluenceResponseEngine;
 import com.ideas.askfluence.query.PostgresRAGContextResolver;
@@ -26,10 +27,10 @@ public class FluenceGenTextAgent {
     @Autowired
     private EmbeddingGenerator embeddingGenerator;
 
-    public String askAgent(String query) {
-        Map<String, List<Float>> embeddings = embeddingGenerator.embedAllContent(List.of(query));
-        String context = contextResolver.resolve(embeddings.get(query));
-        String llmResponse = fluenceResponseEngine.generateLLMResponse(context, query);
+    public String askAgent(AskRequest query) {
+        Map<String, List<Float>> embeddings = embeddingGenerator.embedAllContent(List.of(query.question()));
+        String context = contextResolver.resolve(embeddings.get(query.question()),query.spaces());
+        String llmResponse = fluenceResponseEngine.generateLLMResponse(context, query.question());
         return Sanitizer.formatLLMResponse(llmResponse);
     }
 }

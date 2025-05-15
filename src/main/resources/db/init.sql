@@ -14,3 +14,10 @@ CREATE TABLE IF NOT EXISTS public.confluence_vector (
                                           vectors public.vector NULL,
                                           CONSTRAINT confluence_vector_pkey PRIMARY KEY (id)
 );
+CREATE TABLE IF NOT EXISTS public.confluence_space (
+                                                       id serial4 NOT NULL,
+                                                       space_id int8 NOT NULL,
+                                                       space_key text NOT NULL,
+                                                       space_name text NOT NULL,
+                                                       CONSTRAINT confluence_space_pkey PRIMARY KEY (id)
+);
