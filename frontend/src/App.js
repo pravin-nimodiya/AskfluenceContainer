@@ -69,14 +69,15 @@ function App() {
  };
 
 
- const displayBotMessage = (text) => {
+ const displayBotMessage = (fullText) => {
+   const words = fullText.split(/(\s+)/); // split with whitespace preserved
    let index = 0;
    let newMessage = '';
    setLoading(false);
 
    const updateMessage = () => {
-     if (index < text.length) {
-       newMessage += text[index];
+     if (index < words.length) {
+       newMessage += words[index];
        setMessages((prev) => [
          ...prev.slice(0, -1),
          { sender: 'bot', text: newMessage },
