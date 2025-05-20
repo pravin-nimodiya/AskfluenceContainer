@@ -3,7 +3,7 @@
 # Config
 DOMAIN="ideasinc.atlassian.net"
 EMAIL="pravin.nimodiya@ideas.com"
-API_TOKEN="ATATT3xFfGF0FSDjtR2oVNrWrHooAX9YkzMpAO08VjpLhI0FO6hCkoANryQGYrCvuVGfri6AnJf-knwrfpa4A_eI7252sLSXBlg0NoMUPMoqsM44g_dxq9wHjQJtWYNaNZCu-yTOANnBIcskSIQ72ZuS4nSOIeQRo7_HPXDoA5oETBJ9ZKL_UsU=82F45714"
+API_TOKEN="dummy"
 LIMIT=50
 START=0
 LOCAL_URL="http://localhost:8088/askfluence/index?rootId="
