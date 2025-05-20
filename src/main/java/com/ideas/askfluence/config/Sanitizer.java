@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jsoup.Jsoup;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Sanitizer {
     final static int CHUNK_SIZE = 8000;
@@ -13,6 +15,16 @@ public class Sanitizer {
 
     public static String sanitize(String jsonText) {
         return  Jsoup.parse(jsonText).text()
+                .replace("\\n", " ")
+                .replace("\r", "")
+                .replace("\\","\\\\")
+                .replace("\"","")
+                .replaceAll("[^\\x20-\\x7E]", "")
+                .replaceAll("\\s+", " ");
+    }
+
+    public static String filterPrompt(String jsonText) {
+        return  jsonText
                 .replace("\\n", " ")
                 .replace("\r", "")
                 .replace("\\","\\\\")
@@ -46,11 +58,25 @@ public class Sanitizer {
     public static String formatLLMResponse(String response) {
         try {
             JsonNode jsonNode = OBJECT_MAPPER.readTree(response);
-            return jsonNode.get("generation").asText();
+            //return jsonNode.get("generation").asText();
+            return cleanParagraph(jsonNode.get("generation").asText());
         } catch (Exception e) {
             throw new RuntimeException("Sorry I did not understand");
         }
     }
 
+        public static String cleanParagraph(String paragraph) {
+            if (paragraph == null || paragraph.isEmpty()) return paragraph;
+            String[] sentences = paragraph.split("(?<=[.!?])\\s+");
+
+            Set<String> uniqueSentences = new LinkedHashSet<>();
+            for (String sentence : sentences) {
+                sentence = sentence.trim();
+                if (sentence.matches(".*[.!?]$")) { // Check if sentence ends properly
+                    uniqueSentences.add(sentence);
+                }
+            }
+            return String.join(" ", uniqueSentences);
+        }
 
 }

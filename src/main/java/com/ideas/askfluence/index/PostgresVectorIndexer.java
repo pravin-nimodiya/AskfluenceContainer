@@ -29,10 +29,10 @@ public class PostgresVectorIndexer {
     }
 
     private void insertVectorData(SpaceDetails spaceDetails, Map<String, List<Float>> embeddings) {
-        try {
-            Connection   connection = dataSource.getConnection();
-            String insertQuery = "INSERT INTO confluence_vector (root_id,metadata, vectors) VALUES (?, ?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(insertQuery);
+        String insertQuery = "INSERT INTO confluence_vector (root_id, metadata, vectors) VALUES (?, ?, ?)";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
             connection.setAutoCommit(false);
             for (Map.Entry<String, List<Float>> entry : embeddings.entrySet()) {
                 preparedStatement.setLong(1, spaceDetails.getSpaceId());
@@ -53,29 +53,22 @@ public class PostgresVectorIndexer {
         String deleteVectorSql = "DELETE FROM confluence_vector WHERE root_id = ?";
         String deleteSpaceSql = "DELETE FROM confluence_space WHERE space_id = ?";
 
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement vectorStmt = connection.prepareStatement(deleteVectorSql);
+             PreparedStatement spaceStmt = connection.prepareStatement(deleteSpaceSql)) {
             connection.setAutoCommit(false); // Begin transaction
-            try (
-                    PreparedStatement vectorStmt = connection.prepareStatement(deleteVectorSql);
-                    PreparedStatement spaceStmt = connection.prepareStatement(deleteSpaceSql)
-            ) {
-                long id = Long.parseLong(rootId);
+            long id = Long.parseLong(rootId);
 
-                vectorStmt.setLong(1, id);
-                vectorStmt.executeUpdate();
+            vectorStmt.setLong(1, id);
+            vectorStmt.executeUpdate();
 
-                spaceStmt.setLong(1, id);
-                spaceStmt.executeUpdate();
+            spaceStmt.setLong(1, id);
+            spaceStmt.executeUpdate();
 
-                connection.commit(); // Commit transaction
-            } catch (SQLException e) {
-                connection.rollback(); // Rollback on error
+            connection.commit(); // Commit transaction
+        } catch (SQLException e) {
                 throw new RuntimeException("Failed to delete root data", e);
             }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Database error", e);
-        }
     }
 
 
