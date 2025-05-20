@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Config
+DOMAIN="ideasinc.atlassian.net"
+EMAIL="pravin.nimodiya@ideas.com"
+API_TOKEN="ATATT3xFfGF0FSDjtR2oVNrWrHooAX9YkzMpAO08VjpLhI0FO6hCkoANryQGYrCvuVGfri6AnJf-knwrfpa4A_eI7252sLSXBlg0NoMUPMoqsM44g_dxq9wHjQJtWYNaNZCu-yTOANnBIcskSIQ72ZuS4nSOIeQRo7_HPXDoA5oETBJ9ZKL_UsU=82F45714"
+LIMIT=50
+START=0
+LOCAL_URL="http://localhost:8088/askfluence/index?rootId="
+
+# Loop through paginated space list
+while true; do
+  RESPONSE=$(curl -s -u "$EMAIL:$API_TOKEN" \
+    "https://$DOMAIN/wiki/rest/api/space?limit=$LIMIT&start=$START")
+
+  COUNT=$(echo "$RESPONSE" | jq '.size')
+  if [ "$COUNT" -eq 0 ]; then
+    break
+  fi
+
+  echo "$RESPONSE" | jq -r '.results[] | select(.type != "personal") | .key' | while read SPACE_KEY; do
+    SPACE_DETAIL=$(curl -s -u "$EMAIL:$API_TOKEN" \
+      "https://$DOMAIN/wiki/rest/api/space/$SPACE_KEY?expand=homepage")
+
+    SPACE_NAME=$(echo "$SPACE_DETAIL" | jq -r '.name')
+    HOMEPAGE_ID=$(echo "$SPACE_DETAIL" | jq -r '.homepage.id // empty')
+
+    if [ -n "$HOMEPAGE_ID" ]; then
+      echo "✅ $SPACE_KEY: $SPACE_NAME => homepage ID: $HOMEPAGE_ID"
+     RESPONSE_CODE=$(curl -s --max-time 300 -w "%{http_code}" -o /dev/null \
+     -X POST "$LOCAL_URL$HOMEPAGE_ID")
+     if [ "$RESPONSE_CODE" -eq 200 ]; then
+      echo "✅ Success: $SPACE_NAME"
+     else
+      echo "❌ Failed ($RESPONSE_CODE): $SPACE_NAME"
+     fi
+     # echo "🔄 Called: $LOCAL_URL$HOMEPAGE_ID"
+    else
+      echo "⚠️  $SPACE_KEY: $SPACE_NAME has no homepage."
+    fi
+  done
+
+  START=$((START + LIMIT))
+done
+
