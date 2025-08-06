@@ -33,12 +33,7 @@ public class FluenceResponseEngine {
     }
 
     private String queryLLM(String prompt) {
-        String payload = "{"
-                + "\"prompt\": \"" + prompt + "\","
-                + "\"max_gen_len\": 400,"
-                + "\"temperature\": 0.1,"
-                + "\"top_p\": 0.2"
-                + "}";
+        String payload = getPayload(prompt);
 
         InvokeModelRequest request = InvokeModelRequest.builder()
                 .modelId(configData.getLlmModelId()) // Ensure correct modelId
@@ -49,5 +44,14 @@ public class FluenceResponseEngine {
 
         InvokeModelResponse response = connections.getBedrockClient().invokeModel(request);
         return response.body().asUtf8String();
+    }
+
+    private static String getPayload(String prompt) {
+        return "{"
+                + "\"prompt\": \"" + prompt + "\","
+                + "\"max_gen_len\": 400,"
+                + "\"temperature\": 0.1,"
+                + "\"top_p\": 0.2"
+                + "}";
     }
 }
