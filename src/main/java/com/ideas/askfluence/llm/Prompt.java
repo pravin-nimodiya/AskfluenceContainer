@@ -29,7 +29,15 @@ public class Prompt {
                 "</QUESTION>");
     }
 
+    public String getPromptV2() {
+        return  Sanitizer.filterPrompt("<|begin_of_text|><|start_header_id|>system<|end_header_id|>\nYou are a helpful assistant. Only answer the final question enclosed within <QUESTION> tags. \n" +
+                "Do not answer or summarize other questions in the context. Do not repeat any questions. \n" +
+                "Format any links in Markdown if needed.Include relevant reference and +\n" +
+                "links if available.\n\nContext:\n"+context+"\n<|eot_id|><|start_header_id|>user<|end_header_id|>\n<QUESTION>"+userQuery+"</QUESTION><|eot_id|><|start_header_id|>assistant<|end_header_id|>\n");
+    }
+
+
     public String getSummaryPrompt() {
-        return Sanitizer.sanitize(summarizeText+" Content: "  + context);
+        return Sanitizer.sanitize(summarizeText + " Content: " + context);
     }
 }

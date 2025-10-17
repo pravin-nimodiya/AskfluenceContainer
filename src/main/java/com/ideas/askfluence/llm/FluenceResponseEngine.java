@@ -22,7 +22,7 @@ public class FluenceResponseEngine {
     ConfigData configData;
     public String generateLLMResponse(String context, String userQuery) {
 
-        String prompt = new Prompt(context, userQuery).getPrompt();
+        String prompt = new Prompt(context, userQuery).getPromptV2();
         // Updated payload with explicit inference type
         return queryLLM(prompt);
     }
@@ -43,7 +43,9 @@ public class FluenceResponseEngine {
                 .build();
 
         InvokeModelResponse response = connections.getBedrockClient().invokeModel(request);
-        return response.body().asUtf8String();
+        String responseString = response.body().asUtf8String();
+        log.info("LLM response: {}", responseString);
+        return responseString;
     }
 
     private static String getPayload(String prompt) {
